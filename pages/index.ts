@@ -1,2 +1,5 @@
 export { Challenge } from "./challenges"
-export { Home } from "./home"
+export { Goals } from "./goals"
+export { Timetable } from "./timetable"
+export { Todo } from "./todo"
+export { Stopwatch } from "./stopwatch"
