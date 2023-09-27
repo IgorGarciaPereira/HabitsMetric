@@ -23,9 +23,25 @@ export const createChallengeTables = (db: SQLite.Database) => {
   )
 }
 
+export const createWorkoutTable = (db: SQLite.Database) => {
+  const sqlString = `
+    CREATE TABLE IF NOT EXISTS workouts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name VARCHAR(255) NOT NULL,
+      total_weight DOUBLE,
+      body_area VARCHAR(255)
+    )
+  `
+  db.transaction(
+    ctx => ctx.executeSql(sqlString),
+    ctx => console.error(ctx),
+    () => console.log('Workout table created!')
+  )
+}
 
 export const runMigrations = (db: SQLite.Database) => {
   createChallengeTables(db)
+  createWorkoutTable(db)
 }
 /* DOWN MIGRATIONS */
 export const deleteChallengesTable = (db: SQLite.Database) => {
@@ -37,6 +53,16 @@ export const deleteChallengesTable = (db: SQLite.Database) => {
   )
 }
 
+export const deleteWorkoutTable = (db: SQLite.Database) => {
+  const query = `DROP TABLE workouts`
+  db.transaction(
+    ctx => ctx.executeSql(query),
+    ctx => console.error(ctx),
+    () => console.log('Workout table dropped!')
+  )
+}
+
 export const runDownMigrations = (db: SQLite.Database) => {
   deleteChallengesTable(db)
+  deleteWorkoutTable(db)
 }

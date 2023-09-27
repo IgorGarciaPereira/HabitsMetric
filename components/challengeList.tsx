@@ -3,16 +3,18 @@ import { FlatList, Text, View, StyleSheet, Pressable, Modal, TextInput, Touchabl
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { GlobalStyle, theme } from "../style/index"
-import { getDatabase } from "../utils/database"
 import { IChallengeCreate, IItemList } from "../types/challenge"
-import { createChallengeService, getChallengesService } from "../services/challenge.service"
+import { ChallengesCrud } from "../database/challengesCrud"
 
 
-const ItemList:FC<IItemList> = ({ name, id, handleDelete, handlePress }) => {
+const ItemList:FC<IItemList> = ({ name, id, handleDelete, handlePress, completed }) => {
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={style.item}>
-        <Text>{name}</Text>
+        <View style={style.itemText}>
+          <Text>{name}</Text>
+          <Text style={[style.tag, {backgroundColor: completed ? theme.colors.success : theme.colors.info}]}>{completed ? "Done" : "In progress"}</Text>
+        </View>
         <Pressable style={style.item.button} onPress={() => handleDelete(id)}>
           <Ionicons name="trash-outline" size={16} color="white" />
         </Pressable>
@@ -27,13 +29,13 @@ export const ChallengeList = ({ navigation }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [newChallenge, setNewChallenge] = useState<IChallengeCreate>({} as IChallengeCreate);
-  const db = getDatabase()
+  const challengesDB = new ChallengesCrud()
 
   const createChallenge = () => {
     const d = new Date()
     const starDate = d.toISOString().split("T")[0]
 
-    createChallengeService(
+    challengesDB.create(
       {...newChallenge, created_at: starDate},
       () => { alert("Challenge created!"); getChallenges(); },
       (_) => alert("Error to create challenge")
@@ -41,17 +43,11 @@ export const ChallengeList = ({ navigation }) => {
   }
 
   const getChallenges = () => {
-    getChallengesService(undefined, (values) => setChallenges(values), (error) => console.log(error))
+    challengesDB.get(undefined, (values) => setChallenges(values), (error) => console.log(error))
   }
 
   const deleteChallenge = (challengeId: number) => {
-    const sqlString = `DELETE FROM challenges WHERE id = ?`
-    db.transaction(
-      ctx => ctx.executeSql(sqlString, [challengeId],
-        () => getChallenges(),
-        (_, error) => { console.log(error); return false;}
-      )
-    )
+    challengesDB.delete({id: challengeId}, () => getChallenges(), () => alert("Error to delete challenge"))
   }
 
   /* Modal */
@@ -165,6 +161,13 @@ const style = StyleSheet.create({
     },
   },
 
+  itemText: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 0.95,
+  },
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -189,4 +192,11 @@ const style = StyleSheet.create({
     elevation: 5,
     gap: 16,
   },
+
+  tag: {
+    padding: 4,
+    borderRadius: 4,
+    fontWeight: "600",
+    color: theme.colors.white,
+  }
 })

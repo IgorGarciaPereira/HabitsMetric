@@ -3,21 +3,27 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { completeChallengeService, getChallengesService } from "../services/challenge.service"
 import { IChallenge } from "../types/challenge"
 import { GlobalStyle, theme } from "../style/index"
+import { ChallengesCrud } from "../database/challengesCrud"
 
 export const ChallengeDetails = ({ navigation }) => {
   const state = navigation.getState()
   const params = state.routes[1]?.params
   const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge)
+  const challengeCrud = new ChallengesCrud()
 
   const handleGetChallenge = () => {
-    getChallengesService(params.id, (values: any[]) => setChallenge(values[0]), (error) => console.log(error))
+    challengeCrud.get({id: params.id}, (values: any[]) => setChallenge(values[0]), (error) => console.log(error))
   }
 
-  const handleCompleteChallenge = () => completeChallengeService(
-    challenge.id,
-    () => {alert('Challenge done!'); handleGetChallenge();}, 
-    (error) => { console.log(error); alert('Error to complete challenge')}
-  )
+  const handleCompleteChallenge = () => {
+    const completeDate = new Date().toISOString().split('T')[0]
+    challengeCrud.update(
+      {completed: true, completed_at: completeDate},
+      challenge.id,
+      () => {alert('Challenge done!'); handleGetChallenge();},
+      (error) => { console.log(error); alert('Error to complete challenge')}
+    )
+  }
 
   useEffect(() => {
     if (params?.id) {

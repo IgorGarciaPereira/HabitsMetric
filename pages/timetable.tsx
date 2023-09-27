@@ -1,6 +1,6 @@
 import { Button, Text, View } from "react-native"
 import { GlobalStyle } from "../style"
-import { deleteChallengesTable, getDatabase } from "../utils/database"
+import { deleteChallengesTable, getDatabase } from "../database/database"
 
 const db = getDatabase()
 
