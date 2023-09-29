@@ -2,6 +2,10 @@ import { StyleSheet } from "react-native"
 import { theme } from "./theme"
 
 export const GlobalStyle = StyleSheet.create({
+  screen: {
+    flex: 1
+  },
+
   wrapperContainer: {
     padding: 8
   },
@@ -25,7 +29,7 @@ export const GlobalStyle = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 4,
     borderRadius: 4,
-    height: 32,
+    height: 40,
   },
 
   button: {
@@ -42,6 +46,19 @@ export const GlobalStyle = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     borderColor: theme.colors.primary,
+  },
+
+  modalWrapper: {
+    flex: 1,
+    backgroundColor: '#000a',
+    justifyContent: "center",
+    padding: 32
+  },
+
+  modalContent: {
+    padding: 16,
+    backgroundColor: theme.colors.white,
+    borderRadius: 8,
   }
 })
 

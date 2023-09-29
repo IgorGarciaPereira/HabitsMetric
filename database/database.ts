@@ -29,7 +29,8 @@ export const createWorkoutTable = (db: SQLite.Database) => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name VARCHAR(255) NOT NULL,
       total_weight DOUBLE,
-      body_area VARCHAR(255)
+      body_area VARCHAR(255),
+      weekday INTEGER NULL
     )
   `
   db.transaction(
