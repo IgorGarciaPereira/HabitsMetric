@@ -30,7 +30,8 @@ export const createWorkoutTable = (db: SQLite.Database) => {
       name VARCHAR(255) NOT NULL,
       total_weight DOUBLE,
       body_area VARCHAR(255),
-      weekday INTEGER NULL
+      weekday INTEGER NULL,
+      sequence_number INTEGER NULL
     )
   `
   db.transaction(
